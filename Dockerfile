@@ -1,22 +1,21 @@
-FROM node:lts-alpine
-
-MAINTAINER Joffrey Benoist
-
-RUN npm install -g npm@7.5.6
+FROM node
+LABEL maintainer="Joffrey Benoist"
 
 WORKDIR /app
 
-ENV PATH /app/node_modules/.bin:$PATH
+COPY /angular-project/package.json /app
+COPY /angular-project/package-lock.json /app
 
-COPY ./angular-project/package.json ./
-COPY ./angular-project/package-lock.json ./
-
+RUN npm cache clear --force
+RUN npm install -g npm@7.5.6
 RUN npm install -g @angular/cli
 RUN npm install
 
-COPY angular-project/ ./
+ENV PATH /app/node_modules/.bin:$PATH
 
-EXPOSE 4200 
+COPY angular-project/ /app
+
+EXPOSE 4200
 
 CMD ng serve --host 0.0.0.0
 
